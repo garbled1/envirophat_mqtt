@@ -6,7 +6,7 @@ be easily added, but I don't care.
 
 import argparse
 import time
-from envirophat import light, weather
+from envirophat import light, weather, leds
 
 
 def parse_arguments():
@@ -28,7 +28,7 @@ def parse_arguments():
                         help='How often in seconds to poll (60)')
     parser.add_argument('--overscan', type=int, action='store',
                         default=5,
-                        help='How many readings to average together')
+                        help='How many readings to average together during the polltime')
 
     args = parser.parse_args()
     return args
@@ -38,13 +38,20 @@ def gather_env_data(args):
     data = {}
 
     lux = 0
+    temp = 0
+    press = 0
     for loop in range(args.overscan):
         lux += light.light()
+        print("real lux={0}".format(lux))
+        temp += weather.temperature()
+        press += weather.pressure() / 100.0
 
         if (args.overscan > 1):
             time.sleep(float(args.poll_time) / args.overscan)
 
-    data['lux'] = lux / args.overscan
+    data['lux'] = round(lux / args.overscan, 1)
+    data['temperature'] = round(temp / args.overscan, 1)
+    data['pressure'] = round(press / args.overscan, 1)
 
     return data
 
@@ -52,9 +59,13 @@ def gather_env_data(args):
 def main(args=None):
     args = parse_arguments()
 
+    leds.off()
+    print('Envirophat MQTT starting up')
     while(True):
         data = gather_env_data(args)
         print(f"lux = {data['lux']}")
+        print(f"temp = {data['temperature']}")
+        print(f"pres = {data['pressure']}")
 
 
 if __name__ == "__main__":
