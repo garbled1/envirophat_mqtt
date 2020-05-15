@@ -20,7 +20,7 @@ setup(
     },
     install_requires=[
         'envirophat',
-        'b'
+        'paho-mqtt'
     ],
     python_requires='>3.5',
     long_description=long_description,

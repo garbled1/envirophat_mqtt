@@ -7,16 +7,17 @@ be easily added, but I don't care.
 import argparse
 import time
 from envirophat import light, weather, leds
+import paho.mqtt.client as mqtt
 
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument('--mqtt_host', help='MQTT host',
                         default='localhost', type=str, action='store')
-    parser.add_argument('--mqtt_user', help='MQTT username',
-                        default=None, type=str, action='store')
-    parser.add_argument('--mqtt_pass', help='MQTT password',
-                        default=None, type=str, action='store')
+    # parser.add_argument('--mqtt_user', help='MQTT username',
+    #                     default=None, type=str, action='store')
+    # parser.add_argument('--mqtt_pass', help='MQTT password',
+    #                     default=None, type=str, action='store')
     parser.add_argument('--mqtt_topic', help='MQTT topic',
                         default='envirophat', type=str, action='store')
     parser.add_argument('--mqtt_clientid', help='MQTT client ID',
@@ -61,11 +62,27 @@ def main(args=None):
 
     leds.off()
     print('Envirophat MQTT starting up')
+
+    try:
+        client = mqtt.Client(client_id=args.mqtt_clientid)
+        client.connect(host=args.mqtt_host, port=args.mqtt_port)
+    except Exception as e:
+        print("Failed to start MQTT client, abort: {0}".format(str(e)))
+        return 1
+
+    client.loop_start()
+
     while(True):
         data = gather_env_data(args)
-        print(f"lux = {data['lux']}")
-        print(f"temp = {data['temperature']}")
-        print(f"pres = {data['pressure']}")
+        # print(f"lux = {data['lux']}")
+        # print(f"temp = {data['temperature']}")
+        # print(f"pres = {data['pressure']}")
+        for key in data.keys():
+            try:
+                client.publish(f"{args.mqtt_topic}/{key}", f"{data[key]}")
+            except Exception as e:
+                print("Unable to publish topic, aborting. {0}".format(str(e)))
+                return 1
 
 
 if __name__ == "__main__":
