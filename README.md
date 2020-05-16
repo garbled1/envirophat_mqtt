@@ -36,22 +36,23 @@ in the ExecStart line of this file before installing.  Copy to /etc/systemd/syst
 
 This is my setup, in my sensors.yaml file:
 
-`# garage envirophat
-- platform: mqtt
-  name: garage_temperature
-  state_topic: merope/envirophat/temperature
-  unit_of_measurement: '°C'
-- platform: mqtt
-  name: garage_pressure
-  state_topic: merope/envirophat/pressure
-  unit_of_measurement: 'hPa'
-- platform: mqtt
-  name: garage_lux
-  state_topic: merope/envirophat/lux
-  unix_of_measurement: 'lux'
-`
+    # garage envirophat
+    - platform: mqtt
+      name: garage_temperature
+      state_topic: merope/envirophat/temperature
+      unit_of_measurement: '°C'
+    - platform: mqtt
+      name: garage_pressure
+      state_topic: merope/envirophat/pressure
+      unit_of_measurement: 'hPa'
+    - platform: mqtt
+      name: garage_lux
+      state_topic: merope/envirophat/lux
+      unix_of_measurement: 'lux'
+
 
 I run envirophat_mqtt with the following ExecStart:
+
 `ExecStart=/usr/local/bin/envirophat_mqtt --mqtt_host elgafar.garbled.net --mqtt_topic merope/envirophat --mqtt_clientid merope
 `
 
