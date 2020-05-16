@@ -1,0 +1,12 @@
+[Unit]
+Description=Envirophat MQTT
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/envirophat_mqtt --mqtt_host localhost --mqtt_topic envirophat --mqtt_clientid envirophat
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target network.target
