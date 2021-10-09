@@ -14,10 +14,10 @@ def parse_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument('--mqtt_host', help='MQTT host',
                         default='localhost', type=str, action='store')
-    # parser.add_argument('--mqtt_user', help='MQTT username',
-    #                     default=None, type=str, action='store')
-    # parser.add_argument('--mqtt_pass', help='MQTT password',
-    #                     default=None, type=str, action='store')
+    parser.add_argument('--mqtt_user', help='MQTT username',
+                        default=None, type=str, action='store')
+    parser.add_argument('--mqtt_pass', help='MQTT password',
+                        default=None, type=str, action='store')
     parser.add_argument('--mqtt_topic', help='MQTT topic',
                         default='envirophat', type=str, action='store')
     parser.add_argument('--mqtt_clientid', help='MQTT client ID',
@@ -65,6 +65,8 @@ def main(args=None):
 
     try:
         client = mqtt.Client(client_id=args.mqtt_clientid)
+        if args.mqtt_user is not None and args.mqtt_pass is not None:
+            client.username_pw_set(username=args.mqtt_user, password=args.mqtt_pass)
         client.connect(host=args.mqtt_host, port=args.mqtt_port)
     except Exception as e:
         print("Failed to start MQTT client, abort: {0}".format(str(e)))

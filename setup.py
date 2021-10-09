@@ -8,7 +8,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name="envirophat_mqtt",
-    version="1.0",
+    version="1.1",
     description="Feed data from a pimoroni envirophat into mqtt",
     license='Apache 2.0',
     packages=['envirophat_mqtt'],
